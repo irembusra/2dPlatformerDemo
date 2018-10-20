@@ -192,7 +192,7 @@ public class PlayerMotor : MonoBehaviour {
         {
             timer += Time.deltaTime;
             rb_RigidBody.velocity = new Vector2(rb_RigidBody.velocity.x, 0);
-            rb_RigidBody.AddForce(new Vector3(knockbackDir.x * - 100, knockbackDir.y + knockbackPwr, transform.position.z));
+            rb_RigidBody.AddForce(new Vector3(knockbackDir.x * - 200, knockbackDir.y + knockbackPwr, transform.position.z));
         }
         yield return 0;
     }
