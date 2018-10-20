@@ -23,9 +23,7 @@ public class PlayerAttack : MonoBehaviour {
 	void Update () {
 		if(Input. GetKeyDown("f")&& !attacking)
         {
-            attacking = true;
-            attackTimer = attackCd;
-            attackTrigger.enabled = true;
+            Attack();
         }
         if(attacking)
         {
@@ -43,4 +41,10 @@ public class PlayerAttack : MonoBehaviour {
 
         anim.SetBool("Attack", attacking);
 	}
+
+    public void Attack() {
+        attacking = true;
+        attackTimer = attackCd;
+        attackTrigger.enabled = true;
+    }
 }

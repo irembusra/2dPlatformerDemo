@@ -7,14 +7,14 @@ public class PlayerWin : MonoBehaviour {
 
 public Text winText;
  void Start() {
-winText.enabled=false;	
+winText.text="";	
 }
 
 	private void OnTriggerEnter2D(Collider2D other) {
 		if(other.gameObject.GetComponent<PlayerMotor>() != null) {
 			other.gameObject.GetComponent<Animator>().SetBool("win", true);
 			other.gameObject.GetComponent<PlayerMotor>().enabled = false;
-			winText.enabled=true;
+			winText.text="You Win";
 		}
 	}
 }

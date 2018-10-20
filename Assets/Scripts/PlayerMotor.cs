@@ -30,6 +30,7 @@ public class PlayerMotor : MonoBehaviour {
     public Transform wallCheckPoint;
 
     public LayerMask wallLayerMask;
+    float horizontalMovement;
 	// Use this for initialization
 	void Start () {
         rb_RigidBody = gameObject.GetComponent<Rigidbody2D>();
@@ -41,7 +42,7 @@ public class PlayerMotor : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
+        
         anim_PlayerAnimator.SetBool("damaged", damaged);
         anim_PlayerAnimator.SetBool("grounded", b_Grounded);
         anim_PlayerAnimator.SetBool("Die", b_Die);
@@ -58,32 +59,10 @@ public class PlayerMotor : MonoBehaviour {
             }
         }
        
-		if(Input.GetAxis("Horizontal") < -0.1f)
-        {
-            transform.localScale = new Vector3(-1, 1, 1);
-            facingRight = false;
-        }
-        if (Input.GetAxis("Horizontal") > 0.1f)
-        {
-            transform.localScale = new Vector3(1, 1, 1);
-            facingRight = true;
-        }
+		
         if(Input.GetButtonDown("Jump") && !wallSliding )
         {
-            if(b_Grounded)
-            {
-                rb_RigidBody.AddForce(Vector2.up * f_JumpPower);
-                b_CanDoubleJump = true;
-            }
-            else
-            {
-                if(b_CanDoubleJump)
-                {
-                    b_CanDoubleJump = false;
-                    rb_RigidBody.velocity = new Vector2(rb_RigidBody.velocity.x, 0);
-                    rb_RigidBody.AddForce(Vector2.up * f_JumpPower / 1.50f);
-                }
-            }    
+           Jump();
         }
 
         if(i_CurHealth > i_MaxHealth)
@@ -128,14 +107,15 @@ public class PlayerMotor : MonoBehaviour {
             }
         }
     }
-    void FixedUpdate()
+    public void Walk(float input)
     {
-        Vector3 easeVelocity = rb_RigidBody.velocity;
+        horizontalMovement= input * f_Speed;
+   Vector3 easeVelocity = rb_RigidBody.velocity;
         easeVelocity.y = rb_RigidBody.velocity.y;
         easeVelocity.z = 0.0f;
         easeVelocity.x *= 0.75f;
 
-        float f_h = Input.GetAxis("Horizontal");
+        float f_h = input;
 
         // Fake friction / Easing the x speed of our player
 
@@ -147,11 +127,12 @@ public class PlayerMotor : MonoBehaviour {
         // Moving the player
         if(b_Grounded)
         {
-            rb_RigidBody.AddForce((Vector2.right * f_Speed) * f_h);
+            rb_RigidBody.velocity = new Vector2(horizontalMovement, rb_RigidBody.velocity.y);
+            //rb_RigidBody.velocity =((Vector2.right * f_Speed) * f_h);
         }
         else
         {
-            rb_RigidBody.AddForce((Vector2.right * f_Speed / 2) * f_h);
+            rb_RigidBody.velocity = ((Vector2.right * f_Speed / 2) * f_h);
         }
     
 
@@ -164,6 +145,21 @@ public class PlayerMotor : MonoBehaviour {
         {
             rb_RigidBody.velocity = new Vector2(-f_MaxSpeed, rb_RigidBody.velocity.y);
         }
+
+        if(input < -0.1f)
+        {
+            transform.localScale = new Vector3(-1, 1, 1);
+            facingRight = false;
+        }
+        if (input > 0.1f)
+        {
+            transform.localScale = new Vector3(1, 1, 1);
+            facingRight = true;
+        }
+    }
+    void FixedUpdate()
+    {
+     //Walk(Input.GetAxis("Horizontal"));
     }
 
     void Die()
@@ -183,6 +179,23 @@ public class PlayerMotor : MonoBehaviour {
         animationTimer = animationTime;
 
 
+    }
+
+    public void Jump() {
+         if(b_Grounded)
+            {
+                rb_RigidBody.AddForce(Vector2.up * f_JumpPower);
+                b_CanDoubleJump = true;
+            }
+            else
+            {
+                if(b_CanDoubleJump)
+                {
+                    b_CanDoubleJump = false;
+                    rb_RigidBody.velocity = new Vector2(rb_RigidBody.velocity.x, 0);
+                    rb_RigidBody.AddForce(Vector2.up * f_JumpPower / 1.50f);
+                }
+            }    
     }
 
     public IEnumerator Knockback(float knockDur , float knockbackPwr , Vector3 knockbackDir)
