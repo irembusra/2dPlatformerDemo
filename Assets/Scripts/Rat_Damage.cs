@@ -20,7 +20,13 @@ public class Rat_Damage : MonoBehaviour {
         if (col.CompareTag("Player"))
         {
             player.Damage(1);
-            StartCoroutine(player.Knockback(0.03f, 150, player.transform.position));
+            //StartCoroutine(player.Knockback(0.02f, 150, player.transform.position));
+            var playerController = col.GetComponent<PlayerMotor>();
+            playerController.knockbackCount = playerController.knockbackLength;
+            if (transform.position.x - col.transform.position.x > 0)
+                playerController.knockFromRight = true;
+            else
+                playerController.knockFromRight = false;
         }
     }
 }

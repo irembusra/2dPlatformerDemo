@@ -23,6 +23,11 @@ public class PlayerMotor : MonoBehaviour {
     public bool b_Die = false;
     public bool damaged = false;
 
+    public float knockback;
+    public float knockbackLength;
+    public float knockbackCount;
+    public bool knockFromRight;
+
     private Rigidbody2D rb_RigidBody;
 
     private Animator anim_PlayerAnimator;
@@ -42,7 +47,19 @@ public class PlayerMotor : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        
+
+        if(knockbackCount <= 0) {
+            rb_RigidBody.velocity = new Vector2(horizontalMovement, rb_RigidBody.velocity.y);
+        }
+        else {
+            if (knockFromRight) {
+                rb_RigidBody.velocity = new Vector2(-knockback, knockback/2);
+            }
+            else {
+                rb_RigidBody.velocity = new Vector2(knockback, knockback/2);
+            }
+            knockbackCount -= Time.deltaTime;
+        }
         anim_PlayerAnimator.SetBool("damaged", damaged);
         anim_PlayerAnimator.SetBool("grounded", b_Grounded);
         anim_PlayerAnimator.SetBool("Die", b_Die);
@@ -125,15 +142,15 @@ public class PlayerMotor : MonoBehaviour {
         }
 
         // Moving the player
-        if(b_Grounded)
-        {
+        // if(b_Grounded)
+        // {
             rb_RigidBody.velocity = new Vector2(horizontalMovement, rb_RigidBody.velocity.y);
             //rb_RigidBody.velocity =((Vector2.right * f_Speed) * f_h);
-        }
-        else
-        {
-            rb_RigidBody.velocity = ((Vector2.right * f_Speed / 2) * f_h);
-        }
+        // }
+        // else
+        // {
+        //     rb_RigidBody.velocity = ((Vector2.right * f_Speed / 2) * f_h);
+        // }
     
 
         // Limiting the speed of the player
@@ -198,17 +215,21 @@ public class PlayerMotor : MonoBehaviour {
             }    
     }
 
-    public IEnumerator Knockback(float knockDur , float knockbackPwr , Vector3 knockbackDir)
-    {
-        float timer = 0;
-        while (knockDur > timer)
-        {
-            timer += Time.deltaTime;
-            rb_RigidBody.velocity = new Vector2(rb_RigidBody.velocity.x, 0);
-            rb_RigidBody.AddForce(new Vector3(knockbackDir.x * - 100, knockbackDir.y + knockbackPwr, transform.position.z));
-        }
-        yield return 0;
-    }
+    // public IEnumerator Knockback(float knockDur , float knockbackPwr , Vector3 knockbackDir)
+    // {
+    //     float timer = 0;
+    //       rb_RigidBody.velocity=new Vector2(rb_RigidBody.velocity.x,0);
+    //     while (knockDur > timer)
+    //     {
+    //         timer += Time.deltaTime;
+          
+    //       //  rb_RigidBody.velocity = new Vector2(knockbackDir.x) * - 100, Mathf.Sign(knockbackDir.y + knockbackPwr));
+    //         rb_RigidBody.AddForce(new Vector3(knockbackDir.x * - 100, knockbackDir.y + knockbackPwr, transform.position.z));
+
+    //     }
+     
+    //     yield return 0;
+    // }
 
  
 }
